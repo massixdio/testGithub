@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laminaria, ferme marine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : une ligne de filière horizontale traverse la page ; chaque section y est "accrochée" comme une algue à sa corde. */
+:root {
+  --foam: #eef1ea;
+  --surface: #f8faf5;
+  --ink: #13221e;
+  --muted: #4f5f58;
+  --line: #c9d3c8;
+  --sea: #1d4a45;
+  --kelp: #7c5d1c;
+  --buoy: #d9541a;
+  --on-sea: #eef1ea;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --step--1: 0.82rem;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.7rem;
+  --step-3: clamp(2rem, 4.5vw, 2.8rem);
+  --step-4: clamp(2.8rem, 8vw, 5.6rem);
+  --wrap: 72rem;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --foam: #0e1a18; --surface: #14231f; --ink: #e6ece4; --muted: #9fb0a8;
+    --line: #2a3d38; --sea: #173b37; --kelp: #d1a75a; --buoy: #f0763d; --on-sea: #e6ece4;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --foam: #0e1a18; --surface: #14231f; --ink: #e6ece4; --muted: #9fb0a8;
+  --line: #2a3d38; --sea: #173b37; --kelp: #d1a75a; --buoy: #f0763d; --on-sea: #e6ece4;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--foam);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+}
+img { max-width: 100%; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--buoy); outline-offset: 3px; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.05; text-wrap: balance; margin: 0; }
+p { margin: 0; }
+.wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: 20px; }
+.eyebrow {
+  font-family: var(--font-mono); font-size: var(--step--1);
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--kelp);
+}
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* Navigation */
+.nav {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  background: color-mix(in srgb, var(--foam) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 800; font-size: var(--step-1); text-decoration: none; }
+.brand-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--buoy); box-shadow: 0 0 0 3px color-mix(in srgb, var(--buoy) 25%, transparent); }
+.nav ul { display: flex; flex-wrap: wrap; gap: 4px 22px; list-style: none; margin: 0; padding: 0; font-size: 0.92rem; }
+.nav ul a { text-decoration: none; color: var(--muted); }
+.nav ul a:hover { color: var(--ink); }
+@media (max-width: 720px) { .nav ul { display: none; } }
+
+/* Hero */
+.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+.hero .wrap { position: relative; z-index: 1; padding-block: 72px 56px; display: grid; gap: 28px; }
+.hero h1 { font-size: var(--step-4); font-weight: 800; letter-spacing: -0.02em; max-width: 14ch; }
+.hero h1 em { font-style: normal; color: var(--kelp); }
+.hero p.lead { font-size: var(--step-1); color: var(--muted); max-width: 38rem; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 10px 28px; font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); }
+.hero-meta b { color: var(--ink); font-weight: 500; }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px;
+  font-weight: 600; text-decoration: none; border: 1.5px solid var(--ink); font-size: 0.95rem; cursor: pointer;
+  background: transparent; color: var(--ink); font-family: var(--font-body);
+}
+.btn.primary { background: var(--buoy); border-color: var(--buoy); color: #fff; }
+.btn:hover { transform: translateY(-1px); }
+#kelp { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+/* Chiffres */
+.figures { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--line); }
+.figure { padding: 28px 20px; border-right: 1px solid var(--line); display: grid; gap: 4px; }
+.figure:last-child { border-right: 0; }
+.figure .num { font-family: var(--font-display); font-weight: 700; font-size: var(--step-3); font-variant-numeric: tabular-nums; }
+.figure .num small { font-size: 0.45em; font-weight: 500; color: var(--muted); margin-left: 4px; }
+.figure .lbl { color: var(--muted); font-size: 0.9rem; }
+@media (max-width: 760px) {
+  .figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .figure:nth-child(2) { border-right: 0; }
+  .figure:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+}
+
+/* Sections */
+section.block { padding-block: 88px; }
+.section-head { display: grid; gap: 14px; margin-bottom: 44px; max-width: 44rem; }
+.section-head h2 { font-size: var(--step-3); font-weight: 700; letter-spacing: -0.01em; }
+.section-head p { color: var(--muted); }
+
+/* Histoire */
+.story { display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; align-items: start; }
+.story-text { display: grid; gap: 18px; max-width: 36rem; min-width: 0; }
+.story-text p:first-child { font-size: var(--step-1); }
+.quote {
+  background: var(--sea); color: var(--on-sea); border-radius: 18px; padding: 36px;
+  display: grid; gap: 20px; min-width: 0;
+}
+.quote blockquote { margin: 0; font-family: var(--font-display); font-size: var(--step-2); font-weight: 500; line-height: 1.2; }
+.quote figcaption { font-size: 0.9rem; opacity: 0.8; }
+@media (max-width: 860px) { .story { grid-template-columns: 1fr; gap: 36px; } }
+
+/* Espèces */
+.species { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.sp { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: grid; gap: 12px; grid-template-rows: auto auto auto 1fr auto; }
+.sp svg { width: 100%; height: 120px; display: block; }
+.sp h3 { font-size: var(--step-1); }
+.sp .latin { font-style: italic; color: var(--muted); font-size: 0.9rem; }
+.sp dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin: 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 0.88rem; }
+.sp dt { color: var(--muted); }
+.sp dd { margin: 0; font-family: var(--font-mono); text-align: right; }
+@media (max-width: 860px) { .species { grid-template-columns: 1fr; } }
+
+/* Calendrier */
+.cal-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.cal { display: grid; grid-template-columns: 9rem repeat(12, minmax(3rem, 1fr)); min-width: 46rem; font-size: 0.88rem; }
+.cal > div { padding: 12px 8px; border-bottom: 1px solid var(--line); }
+.cal .m { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); text-align: center; text-transform: uppercase; }
+.cal .row-l { font-weight: 600; padding-left: 16px; }
+.cal .last { border-bottom: 0; }
+.bar { height: 14px; align-self: center; margin-block: 15px; padding: 0 !important; border-bottom: 0 !important; }
+.bar.seed { background: var(--sea); }
+.bar.grow { background: color-mix(in srgb, var(--kelp) 45%, transparent); }
+.bar.harvest { background: var(--buoy); }
+.bar.start { border-radius: 99px 0 0 99px; } .bar.end { border-radius: 0 99px 99px 0; } .bar.solo { border-radius: 99px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 16px; font-size: 0.88rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend i { width: 22px; height: 10px; border-radius: 99px; display: inline-block; }
+
+/* Débouchés */
+.markets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 2px solid var(--ink); }
+.market { padding: 28px 24px 8px 0; display: grid; gap: 10px; align-content: start; }
+.market + .market { padding-left: 24px; border-left: 1px solid var(--line); }
+.market .share { font-family: var(--font-display); font-size: var(--step-3); font-weight: 700; color: var(--kelp); }
+.market h3 { font-size: var(--step-1); }
+.market p { color: var(--muted); }
+@media (max-width: 860px) {
+  .markets { grid-template-columns: 1fr; }
+  .market, .market + .market { padding: 24px 0; border-left: 0; border-bottom: 1px solid var(--line); }
+}
+
+/* Engagements (bande sombre) */
+.band { background: var(--sea); color: var(--on-sea); }
+.band .eyebrow { color: color-mix(in srgb, var(--on-sea) 70%, var(--buoy)); }
+.band .section-head p { color: color-mix(in srgb, var(--on-sea) 75%, transparent); }
+.commit { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 56px; }
+.commit div { display: grid; gap: 8px; padding-top: 18px; border-top: 1px solid color-mix(in srgb, var(--on-sea) 25%, transparent); }
+.commit h3 { font-size: var(--step-1); }
+.commit p { color: color-mix(in srgb, var(--on-sea) 78%, transparent); }
+@media (max-width: 760px) { .commit { grid-template-columns: 1fr; } }
+
+/* Équipe */
+.team { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+.person { display: grid; gap: 6px; }
+.avatar {
+  aspect-ratio: 1; max-width: 100%; border-radius: 14px; display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 2rem; color: var(--on-sea); margin-bottom: 8px;
+}
+.person h3 { font-size: 1.05rem; font-family: var(--font-body); font-weight: 600; }
+.person p { color: var(--muted); font-size: 0.9rem; }
+@media (max-width: 860px) { .team { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Contact */
+.contact { display: grid; grid-template-columns: 1fr 1.2fr; gap: 56px; }
+.contact-info { display: grid; gap: 22px; align-content: start; min-width: 0; }
+.contact-info dl { margin: 0; display: grid; gap: 14px; }
+.contact-info dt { font-family: var(--font-mono); font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.contact-info dd { margin: 0; }
+form { display: grid; gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 28px; min-width: 0; }
+.field { display: grid; gap: 6px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+label { font-size: 0.88rem; font-weight: 600; }
+input, select, textarea {
+  font: inherit; color: var(--ink); background: var(--foam); border: 1px solid var(--line);
+  border-radius: 10px; padding: 11px 13px; width: 100%;
+}
+textarea { min-height: 120px; resize: vertical; }
+.form-note { font-size: 0.9rem; color: var(--sea); font-weight: 600; }
+@media (max-width: 860px) { .contact { grid-template-columns: 1fr; gap: 36px; } .field-row { grid-template-columns: 1fr; } }
+
+footer { border-top: 1px solid var(--line); padding-block: 28px; font-size: 0.88rem; color: var(--muted); }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn:hover { transform: none; } }
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Navigation principale">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="brand-dot" aria-hidden="true"></span>Laminaria</a>
+    <ul>
+      <li><a href="#histoire">Histoire</a></li>
+      <li><a href="#especes">Nos algues</a></li>
+      <li><a href="#saison">Saison</a></li>
+      <li><a href="#debouches">Débouchés</a></li>
+      <li><a href="#equipe">Équipe</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <canvas id="kelp" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <span class="eyebrow">Ferme marine · Rade de Brest · depuis 2017</span>
+    <h1>Nous cultivons la mer <em>sans rien lui ajouter.</em></h1>
+    <p class="lead">Laminaria fait pousser des algues sur filières en pleine eau. Ni engrais, ni eau douce, ni terre agricole : la marée apporte tout. Nous vendons nos récoltes à la cuisine, à la cosmétique et aux fabricants de biomatériaux.</p>
+    <div class="cta-row">
+      <a class="btn primary" href="#contact">Travailler avec nous</a>
+      <a class="btn" href="#especes">Découvrir nos algues</a>
+    </div>
+    <div class="hero-meta">
+      <span>Site <b>48°21′ N · 4°33′ O</b></span>
+      <span>Profondeur filières <b>2 à 4 m</b></span>
+      <span>Coefficient du jour <b id="coef">87</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap" style="padding-inline:0">
+  <div class="figures" role="list">
+    <div class="figure" role="listitem"><span class="num">42<small>ha</small></span><span class="lbl">de concession maritime</span></div>
+    <div class="figure" role="listitem"><span class="num">31<small>km</small></span><span class="lbl">de filières ensemencées</span></div>
+    <div class="figure" role="listitem"><span class="num">180<small>t</small></span><span class="lbl">d'algues fraîches récoltées en 2025</span></div>
+    <div class="figure" role="listitem"><span class="num">14</span><span class="lbl">salariés à l'année, 9 saisonniers</span></div>
+  </div>
+</div>
+
+<section class="block" id="histoire">
+  <div class="wrap story">
+    <div class="story-text">
+      <span class="eyebrow">Notre histoire</span>
+      <p>Tout a commencé avec une corde de 200 mètres et un bateau emprunté à un ostréiculteur de Logonna-Daoulas.</p>
+      <p>Maëlle Kerbrat, ingénieure halieute, et Youenn Le Gall, ancien marin-pêcheur, ont posé leur première filière en novembre 2017. Ils voulaient prouver qu'une production marine pouvait nourrir les gens tout en améliorant l'eau qui l'entoure.</p>
+      <p>Les algues absorbent l'azote et le phosphore rejetés par les bassins versants. Elles stockent du carbone et servent d'abri aux juvéniles de poissons. Huit ans plus tard, la ferme compte 31 kilomètres de cordes et alimente une trentaine de clients réguliers en France et en Belgique.</p>
+    </div>
+    <figure class="quote">
+      <blockquote>« Une filière bien conduite produit plus de biomasse à l'hectare qu'un champ de blé, sans un litre d'eau d'irrigation. »</blockquote>
+      <figcaption>Maëlle Kerbrat, cofondatrice et directrice de production</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="block" id="especes" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Nos algues</span>
+      <h2>Trois espèces locales, toutes indigènes de la Manche et de l'Atlantique.</h2>
+      <p>Nous ne cultivons que des souches prélevées sur les côtes du Finistère. Aucune espèce introduite, aucune sélection génétique.</p>
+    </div>
+    <div class="species">
+      <article class="sp">
+        <svg viewBox="0 0 200 120" aria-hidden="true"><line x1="0" y1="10" x2="200" y2="10" stroke="var(--muted)" stroke-width="2"/><path d="M100 10 C 92 40, 112 70, 96 116 C 118 82, 108 46, 100 10 Z" fill="var(--kelp)"/><path d="M60 10 C 52 34, 70 60, 58 100 C 76 70, 66 40, 60 10 Z" fill="var(--kelp)" opacity=".6"/><path d="M140 10 C 134 32, 150 56, 140 92 C 156 64, 146 36, 140 10 Z" fill="var(--kelp)" opacity=".6"/></svg>
+        <h3>Kombu royal</h3>
+        <span class="latin">Saccharina latissima</span>
+        <p>Une grande lame sucrée, riche en umami. La base des bouillons dashi et des marinades.</p>
+        <dl><dt>Part de la récolte</dt><dd>58 %</dd><dt>Longueur à la récolte</dt><dd>1,5 – 3 m</dd><dt>Récolte</dt><dd>avril – mai</dd></dl>
+      </article>
+      <article class="sp">
+        <svg viewBox="0 0 200 120" aria-hidden="true"><line x1="0" y1="10" x2="200" y2="10" stroke="var(--muted)" stroke-width="2"/><path d="M100 10 L 100 116" stroke="var(--sea)" stroke-width="3"/><path d="M100 30 C 84 52, 90 86, 100 112 C 110 86, 116 52, 100 30 Z" fill="var(--sea)" opacity=".75"/><path d="M60 10 L 60 90" stroke="var(--sea)" stroke-width="2" opacity=".5"/><path d="M60 26 C 48 44, 52 70, 60 88 C 68 70, 72 44, 60 26 Z" fill="var(--sea)" opacity=".45"/><path d="M140 10 L 140 96" stroke="var(--sea)" stroke-width="2" opacity=".5"/><path d="M140 28 C 128 48, 132 74, 140 94 C 148 74, 152 48, 140 28 Z" fill="var(--sea)" opacity=".45"/></svg>
+        <h3>Wakamé atlantique</h3>
+        <span class="latin">Alaria esculenta</span>
+        <p>Fine et tendre, avec une nervure centrale croquante. Se mange crue en salade ou juste blanchie.</p>
+        <dl><dt>Part de la récolte</dt><dd>31 %</dd><dt>Longueur à la récolte</dt><dd>0,8 – 2 m</dd><dt>Récolte</dt><dd>mars – mai</dd></dl>
+      </article>
+      <article class="sp">
+        <svg viewBox="0 0 200 120" aria-hidden="true"><line x1="0" y1="10" x2="200" y2="10" stroke="var(--muted)" stroke-width="2"/><path d="M100 10 C 80 30, 70 50, 76 74 C 84 60, 92 70, 88 96 C 100 78, 106 86, 112 100 C 116 76, 124 66, 128 76 C 132 50, 118 30, 100 10 Z" fill="var(--buoy)" opacity=".8"/></svg>
+        <h3>Dulse</h3>
+        <span class="latin">Palmaria palmata</span>
+        <p>Une algue rouge au goût fumé, proche du bacon une fois poêlée. Notre production la plus demandée par les restaurants.</p>
+        <dl><dt>Part de la récolte</dt><dd>11 %</dd><dt>Longueur à la récolte</dt><dd>20 – 40 cm</dd><dt>Récolte</dt><dd>mai – juin</dd></dl>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="saison" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Une saison à la ferme</span>
+      <h2>Ensemencer à l'automne, récolter au printemps.</h2>
+      <p>Les algues brunes poussent quand l'eau est froide et riche en nutriments. L'été, les filières restent vides pour laisser le milieu se reposer.</p>
+    </div>
+    <div class="cal-wrap" tabindex="0" aria-label="Calendrier de culture, défilable horizontalement">
+      <div class="cal">
+        <div></div>
+        <div class="m">Sep</div><div class="m">Oct</div><div class="m">Nov</div><div class="m">Déc</div><div class="m">Jan</div><div class="m">Fév</div><div class="m">Mar</div><div class="m">Avr</div><div class="m">Mai</div><div class="m">Juin</div><div class="m">Juil</div><div class="m">Août</div>
+
+        <div class="row-l">Kombu royal</div>
+        <div></div><div class="bar seed start"></div><div class="bar seed end"></div><div class="bar grow start"></div><div class="bar grow"></div><div class="bar grow"></div><div class="bar grow end"></div><div class="bar harvest start"></div><div class="bar harvest end"></div><div></div><div></div><div></div>
+
+        <div class="row-l">Wakamé</div>
+        <div></div><div class="bar seed solo"></div><div class="bar grow start"></div><div class="bar grow"></div><div class="bar grow"></div><div class="bar grow end"></div><div class="bar harvest start"></div><div class="bar harvest"></div><div class="bar harvest end"></div><div></div><div></div><div></div>
+
+        <div class="row-l last">Dulse</div>
+        <div class="last"></div><div class="last"></div><div class="bar seed solo"></div><div class="bar grow start"></div><div class="bar grow"></div><div class="bar grow"></div><div class="bar grow"></div><div class="bar grow end"></div><div class="bar harvest start"></div><div class="bar harvest end"></div><div class="last"></div><div class="last"></div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--sea)"></i>Ensemencement des cordes</span>
+      <span><i style="background:color-mix(in srgb, var(--kelp) 45%, transparent)"></i>Croissance en mer</span>
+      <span><i style="background:var(--buoy)"></i>Récolte</span>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="debouches" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Nos débouchés</span>
+      <h2>Une récolte, trois marchés.</h2>
+      <p>Répartition du chiffre d'affaires 2025 (1,9 M€).</p>
+    </div>
+    <div class="markets">
+      <div class="market">
+        <span class="share mono">52 %</span>
+        <h3>Alimentation</h3>
+        <p>Algues fraîches pour la restauration, séchées ou en paillettes pour les épiceries fines. Livraison en 24 h dans le Grand Ouest.</p>
+      </div>
+      <div class="market">
+        <span class="share mono">29 %</span>
+        <h3>Cosmétique</h3>
+        <p>Extraits et poudres certifiés bio pour des laboratoires bretons de soins de la peau et de thalassothérapie.</p>
+      </div>
+      <div class="market">
+        <span class="share mono">19 %</span>
+        <h3>Biomatériaux</h3>
+        <p>Alginates pour des emballages compostables, en partenariat avec deux start-up de Rennes et de Lorient.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block band" id="engagements">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Nos engagements</span>
+      <h2>La mer est notre outil de travail. Nous la mesurons chaque semaine.</h2>
+      <p>Des capteurs placés sur nos filières suivent la température, l'oxygène et les nitrates. Les données sont partagées avec l'Ifremer.</p>
+    </div>
+    <div class="commit">
+      <div><h3>Zéro intrant</h3><p>Aucun engrais, aucun traitement. Les algues se nourrissent uniquement de ce que la marée leur apporte.</p></div>
+      <div><h3>Cordes recyclées</h3><p>Nos filières usées sont reprises par une coopérative de Concarneau qui les transforme en granulés.</p></div>
+      <div><h3>Bateau électrique</h3><p>Depuis 2024, nos rotations quotidiennes se font à bord d'un catamaran de travail à propulsion électrique.</p></div>
+      <div><h3>Emplois à l'année</h3><p>Pendant l'été, l'équipe passe à la transformation et au séchage. Personne n'est licencié hors saison.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="equipe">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">L'équipe</span>
+      <h2>Des gens de mer et des gens de labo.</h2>
+    </div>
+    <div class="team">
+      <div class="person"><div class="avatar" style="background:var(--sea)">MK</div><h3>Maëlle Kerbrat</h3><p>Cofondatrice, production</p></div>
+      <div class="person"><div class="avatar" style="background:var(--kelp)">YL</div><h3>Youenn Le Gall</h3><p>Cofondateur, opérations en mer</p></div>
+      <div class="person"><div class="avatar" style="background:var(--buoy)">SD</div><h3>Sarah Diallo</h3><p>Responsable commerciale</p></div>
+      <div class="person"><div class="avatar" style="background:var(--muted)">TM</div><h3>Thomas Morvan</h3><p>Écloserie et qualité</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="contact" style="padding-top:0">
+  <div class="wrap contact">
+    <div class="contact-info">
+      <div class="section-head" style="margin-bottom:0">
+        <span class="eyebrow">Contact</span>
+        <h2>Parlons de votre projet.</h2>
+        <p>Chef, laboratoire ou industriel : dites-nous ce que vous cherchez, nous répondons sous 48 h.</p>
+      </div>
+      <dl>
+        <div><dt>Adresse</dt><dd>Port du Moulin Mer, 29460 Logonna-Daoulas</dd></div>
+        <div><dt>E-mail</dt><dd class="mono">bonjour@laminaria.example</dd></div>
+        <div><dt>Visites de la ferme</dt><dd>Mercredis d'avril à juin, sur rendez-vous</dd></div>
+      </dl>
+    </div>
+    <form id="contact-form" novalidate>
+      <div class="field-row">
+        <div class="field"><label for="f-name">Nom</label><input id="f-name" name="name" required autocomplete="name"></div>
+        <div class="field"><label for="f-org">Entreprise</label><input id="f-org" name="org" autocomplete="organization"></div>
+      </div>
+      <div class="field"><label for="f-email">E-mail</label><input id="f-email" name="email" type="email" required autocomplete="email"></div>
+      <div class="field">
+        <label for="f-topic">Vous êtes</label>
+        <select id="f-topic" name="topic">
+          <option>Restaurant ou épicerie</option>
+          <option>Laboratoire cosmétique</option>
+          <option>Industriel biomatériaux</option>
+          <option>Presse ou particulier</option>
+        </select>
+      </div>
+      <div class="field"><label for="f-msg">Message</label><textarea id="f-msg" name="message" required></textarea></div>
+      <div class="cta-row"><button class="btn primary" type="submit">Envoyer le message</button></div>
+      <p class="form-note" id="form-note" role="status" hidden></p>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Laminaria SAS · Entreprise fictive créée pour démonstration</span>
+    <span class="mono">48°21′ N · 4°33′ O</span>
+  </div>
+</footer>
+
+<script>
+// Formulaire : validation locale uniquement (aucun envoi réel)
+document.getElementById("contact-form").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var note = document.getElementById("form-note");
+  if (!this.checkValidity()) {
+    note.textContent = "Renseignez votre nom, un e-mail valide et un message.";
+  } else {
+    note.textContent = "Merci " + this.name.value.trim() + ", votre message est prêt. (Démonstration : rien n'a été envoyé.)";
+    this.reset();
+  }
+  note.hidden = false;
+});
+
+// Animation du hero : une filière avec bouées et algues qui ondulent
+(function () {
+  var canvas = document.getElementById("kelp");
+  var ctx = canvas.getContext("2d");
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var w, h, dpr, strands = [];
+
+  function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  function resize() {
+    dpr = window.devicePixelRatio || 1;
+    w = canvas.clientWidth; h = canvas.clientHeight;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    strands = [];
+    var count = Math.max(8, Math.floor(w / 46));
+    for (var i = 0; i < count; i++) {
+      strands.push({
+        x: w * 0.42 + (w * 0.58) * (i / count) + Math.random() * 12,
+        len: h * (0.35 + Math.random() * 0.45),
+        width: 6 + Math.random() * 10,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+  }
+
+  function draw(t) {
+    ctx.clearRect(0, 0, w, h);
+    var lineY = h * 0.14;
+    var kelp = css("--kelp"), line = css("--muted"), buoy = css("--buoy");
+
+    ctx.strokeStyle = line; ctx.globalAlpha = 0.5; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(w * 0.38, lineY); ctx.lineTo(w, lineY); ctx.stroke();
+
+    ctx.fillStyle = kelp;
+    strands.forEach(function (s) {
+      ctx.globalAlpha = 0.16;
+      var sway = Math.sin(t / 1600 + s.phase);
+      ctx.beginPath();
+      ctx.moveTo(s.x, lineY);
+      var steps = 18;
+      var left = [], right = [];
+      for (var k = 0; k <= steps; k++) {
+        var p = k / steps;
+        var y = lineY + p * s.len;
+        var x = s.x + sway * 22 * p * p + Math.sin(t / 900 + s.phase + p * 4) * 5 * p;
+        var half = s.width * Math.sin(Math.PI * Math.min(1, p * 1.15)) * 0.9 + 0.5;
+        left.push([x - half, y]); right.push([x + half, y]);
+      }
+      left.forEach(function (pt) { ctx.lineTo(pt[0], pt[1]); });
+      for (var r = right.length - 1; r >= 0; r--) ctx.lineTo(right[r][0], right[r][1]);
+      ctx.closePath(); ctx.fill();
+    });
+
+    ctx.globalAlpha = 0.9; ctx.fillStyle = buoy;
+    for (var b = 0; b < 4; b++) {
+      var bx = w * 0.42 + (w * 0.58) * (b / 3.2);
+      var by = lineY - 8 + Math.sin(t / 1300 + b) * 2;
+      ctx.beginPath(); ctx.arc(bx, by, 8, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function loop(t) { draw(t); requestAnimationFrame(loop); }
+
+  resize();
+  window.addEventListener("resize", resize);
+  if (reduce) draw(0); else requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
