@@ -6,7 +6,7 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout1') {
             steps {
                 checkout scm       // récupère le code du dépôt configuré dans le job
             }
